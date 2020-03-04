@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Animal : MonoBehaviour
+public abstract class Animal : MonoBehaviour, IClickable
 {
     protected new string name;
     protected int legs;
@@ -49,10 +49,7 @@ public class Animal : MonoBehaviour
         transform.LookAt(lookAt);
     }
 
-    protected virtual void MakeSound()
-    {
-
-    }
+    protected abstract void MakeSound();
 
     protected virtual void Jump()
     {

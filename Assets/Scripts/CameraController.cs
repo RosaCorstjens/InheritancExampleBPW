@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
             {
                 // something was hit
                 // if it was an animal, handle clicked
-                hit.transform.gameObject.GetComponent<Animal>()?.Clicked();
+                hit.transform.gameObject.GetComponent<IClickable>()?.Clicked();
             }
         }
 
