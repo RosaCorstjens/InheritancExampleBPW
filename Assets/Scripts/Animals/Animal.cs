@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Animal : MonoBehaviour, IClickable
+public abstract class Animal : MonoBehaviour, IClickable, ISelectable
 {
     protected new string name;
     protected int legs;
@@ -13,6 +13,10 @@ public abstract class Animal : MonoBehaviour, IClickable
     private float jumpForce;
     private float pushForce;
 
+    [SerializeField] private Material stndrtMaterial;
+    [SerializeField] private Material selectedMaterial;
+    private List<MeshRenderer> meshRenderers;
+
     protected virtual void Start()
     {
         jumpForce = 200;
@@ -20,6 +24,10 @@ public abstract class Animal : MonoBehaviour, IClickable
 
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
+
+        // hmm.. this should be ok. right?
+        //meshRenderers = new List<MeshRenderer>();
+        meshRenderers.AddRange(transform.GetComponentsInChildren<MeshRenderer>());
     }
 
     protected virtual void Update()
@@ -54,5 +62,15 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected virtual void Jump()
     {
         rigidbody.AddForce(new Vector3(0, jumpForce, 0));
+    }
+
+    public void Select()
+    {
+        meshRenderers.ForEach(m => m.material = selectedMaterial);
+    }
+
+    public void Deselect()
+    {
+        meshRenderers.ForEach(m => m.material = stndrtMaterial);
     }
 }

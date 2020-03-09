@@ -5,16 +5,18 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public static Transform myTransform;
-    public List<Animal> animals;
 
     public float speed = 6.0f;
     public float rotateSpeed = 6.0f;
 
     private Vector3 moveDirection = Vector3.zero;
 
+    private GameObject clicked
+
     private void Start()
     {
-        myTransform = gameObject.transform;
+        // teehee
+        //myTransform = gameObject.transform;
     }
 
     private void Update()
@@ -29,7 +31,7 @@ public class CameraController : MonoBehaviour
             {
                 // something was hit
                 // if it was an animal, handle clicked
-                hit.transform.gameObject.GetComponent<IClickable>()?.Clicked();
+                Clicked(hit.transform.gameObject);
             }
         }
 
@@ -41,5 +43,24 @@ public class CameraController : MonoBehaviour
 
         // apply rotation
         transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
+    }
+
+    private void Clicked(GameObject gameobject)
+    {
+        // did I forget to check something(s)? ... 
+
+        // if there was a last clicked object
+        // deselect it
+        if (clicked != null) { }
+            clicked.GetComponent<ISelectable>().Deselect();
+
+        // remember the clicked objects
+        clicked = gameobject;
+
+        // click on the clicked object
+        clicked.GetComponent<IClickable>().Clicked();
+
+        // select the clicked object
+        clicked.GetComponent<ISelectable>().Select();
     }
 }
