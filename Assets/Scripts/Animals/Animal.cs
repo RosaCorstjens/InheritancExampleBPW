@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class Animal : MonoBehaviour, IClickable
 {
@@ -9,6 +10,8 @@ public abstract class Animal : MonoBehaviour, IClickable
 
     protected Animator animator;
     protected new Rigidbody rigidbody;
+    protected NavMeshAgent navMeshAgent;
+    [SerializeField] protected Transform destination;
 
     private float jumpForce;
     private float pushForce;
@@ -20,6 +23,10 @@ public abstract class Animal : MonoBehaviour, IClickable
 
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (navMeshAgent != null)
+            SetDestination();
     }
 
     protected virtual void Update()
@@ -54,5 +61,11 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected virtual void Jump()
     {
         rigidbody.AddForce(new Vector3(0, jumpForce, 0));
+    }
+
+    protected void SetDestination()
+    {
+        if(destination != null)
+            navMeshAgent.SetDestination(destination.position);
     }
 }

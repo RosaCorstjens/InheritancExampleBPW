@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] private Transform environment;
+
     public static Transform myTransform;
-    public List<Animal> animals;
+    public static List<Transform> destinations;
 
     public float speed = 6.0f;
     public float rotateSpeed = 6.0f;
@@ -15,6 +17,15 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         myTransform = gameObject.transform;
+
+        destinations = new List<Transform>();
+        for(int i = 0; i < environment.childCount; i++)
+        {
+            if (environment.GetChild(i).name.Contains("Flower"))
+            {
+                destinations.Add(environment.GetChild(i));
+            }
+        }
     }
 
     private void Update()

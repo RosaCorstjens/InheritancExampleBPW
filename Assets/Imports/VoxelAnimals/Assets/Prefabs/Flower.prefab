@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23360750235119396}
   - component: {fileID: 3082183885304298252}
   - component: {fileID: 315145691636742491}
+  - component: {fileID: 2590873846742304699}
   m_Layer: 0
   m_Name: Flower
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1663053347730230}
-  m_LocalRotation: {x: 0.000000081460335, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.135347, y: 2.8922463e-17, z: -1.3025519}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children: []
@@ -106,3 +107,15 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.002
   m_Center: {x: 0.00050216255, y: 0.0014648497, z: 0.00049078406}
+--- !u!114 &2590873846742304699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663053347730230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 458aefb029f32214489cf26fe7a6d322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
