@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
 
     private Vector3 moveDirection = Vector3.zero;
 
-    private void Start()
+    private void Awake()
     {
         myTransform = gameObject.transform;
 
@@ -52,5 +52,10 @@ public class CameraController : MonoBehaviour
 
         // apply rotation
         transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
+    }
+
+    public static Vector3 GetRandomDestination()
+    {
+        return destinations[Random.Range(0, destinations.Count)].position;
     }
 }

@@ -11,10 +11,14 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected Animator animator;
     protected new Rigidbody rigidbody;
     protected NavMeshAgent navMeshAgent;
-    [SerializeField] protected Transform destination;
+    protected FSM fsm;
 
     private float jumpForce;
     private float pushForce;
+
+    [SerializeField] private float runSpeedMultiplier = 2f;
+    private float baseSpeed;
+    private bool isRunning;
 
     protected virtual void Start()
     {
@@ -24,14 +28,15 @@ public abstract class Animal : MonoBehaviour, IClickable
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        baseSpeed = navMeshAgent.speed;
 
-        if (navMeshAgent != null)
-            SetDestination();
+        fsm = new FSM();
+        fsm.Initialize(this.gameObject);
     }
 
     protected virtual void Update()
     {
-        
+        fsm.UpdateState();
     }
 
     public void Clicked()
@@ -42,8 +47,8 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected virtual void ReactToClick()
     {
         // add a little push from the player
-        Vector3 pushDirection = transform.position - CameraController.myTransform.position;
-        rigidbody.AddForce(pushForce * pushDirection);
+        //Vector3 pushDirection = transform.position - CameraController.myTransform.position;
+        //rigidbody.AddForce(pushForce * pushDirection);
         
         // more specific behavior implemented in subclasses
     }
@@ -63,9 +68,13 @@ public abstract class Animal : MonoBehaviour, IClickable
         rigidbody.AddForce(new Vector3(0, jumpForce, 0));
     }
 
-    protected void SetDestination()
+    protected virtual void ToggleRun()
     {
-        if(destination != null)
-            navMeshAgent.SetDestination(destination.position);
+        isRunning = !isRunning;
+
+        if (isRunning)
+            navMeshAgent.speed = baseSpeed * runSpeedMultiplier;
+        else
+            navMeshAgent.speed = baseSpeed;
     }
 }

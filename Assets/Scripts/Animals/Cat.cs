@@ -10,6 +10,9 @@ public class Cat : Animal
 
         name = "Cat";
         legs = 4;
+
+        // start in idle
+        fsm.GotoState(StateType.Idle);
     }
 
     protected override void ReactToClick()
