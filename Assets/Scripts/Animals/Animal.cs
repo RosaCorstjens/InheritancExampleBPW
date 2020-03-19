@@ -25,11 +25,15 @@ public abstract class Animal : MonoBehaviour, IClickable
         jumpForce = 200;
         pushForce = 50;
 
+        // get references to components
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+
+        // remember the base speed
         baseSpeed = navMeshAgent.speed;
 
+        // create and initialize the new FSM
         fsm = new FSM();
         fsm.Initialize(this.gameObject);
     }
@@ -47,15 +51,16 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected virtual void ReactToClick()
     {
         // add a little push from the player
-        //Vector3 pushDirection = transform.position - CameraController.myTransform.position;
-        //rigidbody.AddForce(pushForce * pushDirection);
+        // Vector3 pushDirection = transform.position - CameraController.myTransform.position;
+        // rigidbody.AddForce(pushForce * pushDirection);
         
         // more specific behavior implemented in subclasses
     }
 
     protected void LookAtPlayer()
     {
-        // look at player
+        // calculates position to look at
+        // and sets transform
         Vector3 lookAt = CameraController.myTransform.position;
         lookAt.y = transform.position.y;
         transform.LookAt(lookAt);
@@ -72,6 +77,7 @@ public abstract class Animal : MonoBehaviour, IClickable
     {
         isRunning = !isRunning;
 
+        // set speed accordingly
         if (isRunning)
             navMeshAgent.speed = baseSpeed * runSpeedMultiplier;
         else

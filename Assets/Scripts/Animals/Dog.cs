@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Dog : Animal
 {
+    // timer to switch between states:
+    // idle and wander
     private float timer;
 
     protected override void Start()
@@ -14,11 +16,10 @@ public class Dog : Animal
         legs = 4;
 
         // add idle state
-        // subscribe on enter
         fsm.AddState(StateType.Idle, new AnimalIdle());
         fsm.GetState(StateType.Idle).onEnter.AddListener(SetTimer);
 
-        // add the wander state
+        // add wander state
         fsm.AddState(StateType.Wander, new AnimalWander());
         fsm.GetState(StateType.Wander).onEnter.AddListener(SetTimer);
 
@@ -30,7 +31,7 @@ public class Dog : Animal
     {
         base.Update();
 
-        // check whether we should leave the idle state
+        // check whether we should switch state
         timer -= Time.deltaTime;
         if(timer <= 0)
         {
@@ -61,6 +62,7 @@ public class Dog : Animal
 
     public void SetTimer()
     {
+        // set timer based on the current state
         switch (fsm.CurrentState)
         {
             case StateType.Idle:

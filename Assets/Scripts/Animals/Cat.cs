@@ -11,6 +11,9 @@ public class Cat : Animal
         name = "Cat";
         legs = 4;
 
+        // add idle
+        fsm.AddState(StateType.Idle, new AnimalIdle());
+
         // start in idle
         fsm.GotoState(StateType.Idle);
     }

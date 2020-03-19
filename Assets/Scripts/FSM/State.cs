@@ -79,6 +79,7 @@ public class AnimalWander : State
 
     protected void SetDestination()
     {
+        // set a random destination
         owner.NavMeshAgent.SetDestination(CameraController.GetRandomDestination());
     }
 }
@@ -99,8 +100,12 @@ public class AnimalFlee : State
     public override void Update()
     {
         // run away from player
+
+        // calculate the direction vector
         Vector3 direction = owner.Transform.position - CameraController.myTransform.position;
         direction.Normalize();
+
+        // set the destination in that direction from this position
         owner.NavMeshAgent.SetDestination(owner.Transform.position + (direction * 10));
     }
 }
