@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     // can only be accessed in this class
     private static GameManager instance;
 
-    // is available from all throughout the code with GameManager.Instan0ce
+    // is available from all throughout the code with GameManager.Instance
     public static GameManager Instance
     {
         get
