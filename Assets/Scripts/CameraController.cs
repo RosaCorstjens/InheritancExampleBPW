@@ -4,34 +4,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Transform environment;
-
-    public static Transform myTransform;
-    public static List<Transform> destinations;
-
-    public float speed = 6.0f;
+    public float moveSpeed = 6.0f;
     public float rotateSpeed = 6.0f;
 
     private Vector3 moveDirection = Vector3.zero;
 
-    private void Awake()
-    {
-        myTransform = gameObject.transform;
-
-        destinations = new List<Transform>();
-        for(int i = 0; i < environment.childCount; i++)
-        {
-            if (environment.GetChild(i).name.Contains("Flower"))
-            {
-                destinations.Add(environment.GetChild(i));
-            }
-        }
-    }
-
-    private void Update()
+    public void DoUpdate()
     {
         // handle clicks on objects
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         { 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -40,7 +21,7 @@ public class CameraController : MonoBehaviour
             {
                 // something was hit
                 // if it was an animal, handle clicked
-                hit.transform.gameObject.GetComponent<IClickable>()?.Clicked();
+                hit.transform.gameObject.GetComponent<IClickable>()?.Clicked(Input.GetMouseButtonDown(0), Input.GetMouseButtonDown(1));
             }
         }
 
@@ -48,14 +29,11 @@ public class CameraController : MonoBehaviour
         moveDirection = new Vector3(0, 0, Input.GetAxis("Vertical"));
         
         // apply movement
-        transform.Translate(moveDirection * speed * Time.deltaTime);
+        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
 
         // apply rotation
-        transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
+        transform.Rotate(0, Input.GetAxis("Horizontal") * rotateSpeed, 0);
     }
 
-    public static Vector3 GetRandomDestination()
-    {
-        return destinations[Random.Range(0, destinations.Count)].position;
-    }
+
 }

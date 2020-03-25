@@ -4,73 +4,67 @@ using UnityEngine;
 
 public class Dog : Animal
 {
-    // timer to switch between states:
-    // idle and wander
-    private float timer;
+    [SerializeField] private float chaseUntilDist = 5f;
+    [SerializeField] private float chaseStartDist = 10f;
 
-    protected override void Start()
+    protected override void Initialize()
     {
-        base.Start();
+        base.Initialize();
 
         name = "Dog";
         legs = 4;
 
         // add idle state
-        fsm.AddState(StateType.Idle, new AnimalIdle());
-        fsm.GetState(StateType.Idle).onEnter.AddListener(SetTimer);
+        fsm.AddState(AnimalStateType.Idle, new AnimalIdle());
 
-        // add wander state
-        fsm.AddState(StateType.Wander, new AnimalWander());
-        fsm.GetState(StateType.Wander).onEnter.AddListener(SetTimer);
+        // add chase state
+        fsm.AddState(AnimalStateType.Chase, new AnimalChase());
 
-        // start in the wander state
-        fsm.GotoState(StateType.Wander);
+        // start in the chase state
+        fsm.GotoState(AnimalStateType.Chase);
     }
 
-    protected override void Update()
+    public override void DoUpdate()
     {
-        base.Update();
+        base.DoUpdate();
 
-        // check whether we should switch state
-        timer -= Time.deltaTime;
-        if(timer <= 0)
+        // calculate distance to player
+        float distanceToPlayer = Vector3.Distance(transform.position, GameManager.Instance.controller.transform.position);
+
+        // based on the current state
+        // react on that distance
+        switch (fsm.CurrentState)
         {
-            switch (fsm.CurrentState)
-            {
-                case StateType.Idle:
-                    fsm.GotoState(StateType.Wander);
-                    break;
-                case StateType.Wander:
-                    fsm.GotoState(StateType.Idle);
-                    break;
-            }
+            case AnimalStateType.Idle:
+                // player far enough? go to flee
+                if (distanceToPlayer > chaseStartDist)
+                {
+                    fsm.GotoState(AnimalStateType.Chase);
+                }
+                break;
+            case AnimalStateType.Chase:
+                // player reached? go to idle
+                if (distanceToPlayer < chaseUntilDist)
+                {
+                    fsm.GotoState(AnimalStateType.Idle);
+                }
+                break;
         }
     }
 
-    protected override void ReactToClick()
+    protected override void ReactToClick(bool leftMB, bool rightMB)
     {
-        base.ReactToClick();
+        base.ReactToClick(leftMB, rightMB);
 
-        LookAtPlayer();
-        MakeSound();
+        if (leftMB)
+        {
+            LookAtPlayer();
+            MakeSound();
+        }
     }
 
     protected override void MakeSound()
     {
         Debug.Log("Woef woef");
-    }
-
-    public void SetTimer()
-    {
-        // set timer based on the current state
-        switch (fsm.CurrentState)
-        {
-            case StateType.Idle:
-                timer = Random.Range(1, 7);
-                break;
-            case StateType.Wander:
-                timer = Random.Range(20, 60);
-                break;
-        }
     }
 }

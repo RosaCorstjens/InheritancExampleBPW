@@ -7,55 +7,59 @@ public class Chicken : Animal
     [SerializeField] private float fleeUntilDist = 5f;
     [SerializeField] private float fleeStartDist = 2f;
 
-    protected override void Start()
+    protected override void Initialize()
     {
-        base.Start();
+        base.Initialize();
 
         name = "Chicken";
         legs = 4;
 
         // add states and subscribe to listeners
-        fsm.AddState(StateType.Flee, new AnimalFlee());
-        fsm.GetState(StateType.Flee).onEnter.AddListener(ToggleRun);
-        fsm.GetState(StateType.Flee).onExit.AddListener(ToggleRun);
-        fsm.AddState(StateType.Idle, new AnimalIdle());
+        fsm.AddState(AnimalStateType.Flee, new AnimalFlee());
+        fsm.GetState(AnimalStateType.Flee).onEnter.AddListener(ToggleRun);
+        fsm.GetState(AnimalStateType.Flee).onExit.AddListener(ToggleRun);
+        fsm.AddState(AnimalStateType.Wander, new AnimalWander());
 
         // start in idle
-        fsm.GotoState(StateType.Idle);
+        fsm.GotoState(AnimalStateType.Wander);
     }
 
-    protected override void Update()
+    public override void DoUpdate()
     {
-        base.Update();
+        base.DoUpdate();
 
         // calculate distance to player
-        float distanceToPlayer = Vector3.Distance(transform.position, CameraController.myTransform.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, GameManager.Instance.controller.transform.position);
 
         // based on the current state
         // react on that distance
         switch (fsm.CurrentState)
         {
-            case StateType.Idle:
+            case AnimalStateType.Wander:
                 // player too close? go to flee
                 if(distanceToPlayer < fleeStartDist)
                 {
-                    fsm.GotoState(StateType.Flee);
+                    fsm.GotoState(AnimalStateType.Flee);
                 }
                 break;
-            case StateType.Flee:
+            case AnimalStateType.Flee:
                 // player far enough? go to idle
                 if (distanceToPlayer >= fleeUntilDist)
                 {
-                    fsm.GotoState(StateType.Idle);
+                    fsm.GotoState(AnimalStateType.Wander);
                 }
                 break;
         }
     }
 
-    protected override void ReactToClick()
+    protected override void ReactToClick(bool leftMB, bool rightMB)
     {
-        base.ReactToClick();
-        MakeSound();
+        base.ReactToClick(leftMB, rightMB);
+
+        if (leftMB)
+            MakeSound();
+        else if (rightMB)
+            Die();
     }
 
     protected override void MakeSound()

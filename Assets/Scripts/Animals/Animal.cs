@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public abstract class Animal : MonoBehaviour, IClickable
 {
@@ -11,7 +12,7 @@ public abstract class Animal : MonoBehaviour, IClickable
     protected Animator animator;
     protected new Rigidbody rigidbody;
     protected NavMeshAgent navMeshAgent;
-    protected FSM fsm;
+    protected AnimalFSM fsm;
 
     private float jumpForce;
     private float pushForce;
@@ -20,7 +21,15 @@ public abstract class Animal : MonoBehaviour, IClickable
     private float baseSpeed;
     private bool isRunning;
 
-    protected virtual void Start()
+    private bool initialized = false;
+
+    public void Start()
+    {
+        // subscribe to the game manager
+        GameManager.Instance.animals.Add(this);
+    }
+
+    protected virtual void Initialize()
     {
         jumpForce = 200;
         pushForce = 50;
@@ -34,34 +43,35 @@ public abstract class Animal : MonoBehaviour, IClickable
         baseSpeed = navMeshAgent.speed;
 
         // create and initialize the new FSM
-        fsm = new FSM();
+        fsm = new AnimalFSM();
         fsm.Initialize(this.gameObject);
+
+        initialized = true;
     }
 
-    protected virtual void Update()
+    public virtual void DoUpdate()
     {
+        if (!initialized)
+            Initialize();
+
         fsm.UpdateState();
     }
 
-    public void Clicked()
+    public void Clicked(bool leftMB, bool rightMB)
     {
-        ReactToClick();
+        ReactToClick(leftMB, rightMB);
     }
 
-    protected virtual void ReactToClick()
+    protected virtual void ReactToClick(bool leftMB, bool rightMB)
     {
-        // add a little push from the player
-        // Vector3 pushDirection = transform.position - CameraController.myTransform.position;
-        // rigidbody.AddForce(pushForce * pushDirection);
-        
-        // more specific behavior implemented in subclasses
+        // specific behavior implemented in subclasses
     }
 
     protected void LookAtPlayer()
     {
         // calculates position to look at
         // and sets transform
-        Vector3 lookAt = CameraController.myTransform.position;
+        Vector3 lookAt = GameManager.Instance.controller.transform.position;
         lookAt.y = transform.position.y;
         transform.LookAt(lookAt);
     }
@@ -82,5 +92,21 @@ public abstract class Animal : MonoBehaviour, IClickable
             navMeshAgent.speed = baseSpeed * runSpeedMultiplier;
         else
             navMeshAgent.speed = baseSpeed;
+    }
+
+    public virtual void Die()
+    {
+        // play death particle
+        GameObject.Instantiate(GameManager.Instance.bloodParticle, transform.position, Quaternion.identity);
+
+        Destroy();
+    }
+
+    public virtual void Destroy()
+    {
+        // unsubscribe from the gamemanager
+        GameManager.Instance.animals.Remove(this);
+
+        Destroy(this.gameObject);
     }
 }

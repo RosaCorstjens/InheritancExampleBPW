@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class Cat : Animal
 {
-    protected override void Start()
+    protected override void Initialize()
     {
-        base.Start();
+        base.Initialize();
 
         name = "Cat";
         legs = 4;
 
         // add idle
-        fsm.AddState(StateType.Idle, new AnimalIdle());
+        fsm.AddState(AnimalStateType.Idle, new AnimalIdle());
 
         // start in idle
-        fsm.GotoState(StateType.Idle);
+        fsm.GotoState(AnimalStateType.Idle);
     }
 
-    protected override void ReactToClick()
+    protected override void ReactToClick(bool leftMB, bool rightMB)
     {
-        base.ReactToClick();
+        base.ReactToClick(leftMB, rightMB);
     }
 
     protected override void MakeSound()

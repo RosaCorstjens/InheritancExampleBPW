@@ -7,7 +7,7 @@ using UnityEngine;
 
 class DestroyOnClick : MonoBehaviour, IClickable
 {
-    public void Clicked()
+    public void Clicked(bool leftMB, bool rightMB)
     {
         Destroy(gameObject);
     }

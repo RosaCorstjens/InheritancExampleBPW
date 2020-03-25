@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IClickable 
 {
-    void Clicked();
+    void Clicked(bool leftMB, bool rightMB);
 }
