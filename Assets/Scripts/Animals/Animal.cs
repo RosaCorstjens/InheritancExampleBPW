@@ -23,7 +23,7 @@ public abstract class Animal : MonoBehaviour, IClickable
 
     private bool initialized = false;
 
-    public void Start()
+    public virtual void Start()
     {
         // subscribe to the game manager
         GameManager.Instance.animals.Add(this);

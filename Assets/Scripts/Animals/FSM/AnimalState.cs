@@ -112,6 +112,13 @@ public class AnimalFlee : AnimalState
 
 public class AnimalChase : AnimalState
 {
+    private Transform chaseTransform;
+
+    public void SetChaseTransform(Transform newChaseTransform)
+    {
+        chaseTransform = newChaseTransform;
+    }
+
     public override void Enter()
     {
         base.Enter();
@@ -125,10 +132,13 @@ public class AnimalChase : AnimalState
 
     public override void Update()
     {
-        // chase from player
+        if (chaseTransform == null)
+            return;
 
-        // set the destination to the player
-        owner.NavMeshAgent.SetDestination(GameManager.Instance.controller.transform.position);
+        // chase 
+
+        // set the destination to the chase transform
+        owner.NavMeshAgent.SetDestination(chaseTransform.position);
     }
 }
 

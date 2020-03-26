@@ -19,6 +19,7 @@ public class Dog : Animal
 
         // add chase state
         fsm.AddState(AnimalStateType.Chase, new AnimalChase());
+        ((AnimalChase)fsm.GetState(AnimalStateType.Chase)).SetChaseTransform(GameManager.Instance.controller.transform);
 
         // start in the chase state
         fsm.GotoState(AnimalStateType.Chase);

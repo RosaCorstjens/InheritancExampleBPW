@@ -7,6 +7,13 @@ public class Chicken : Animal
     [SerializeField] private float fleeUntilDist = 5f;
     [SerializeField] private float fleeStartDist = 2f;
 
+    public override void Start()
+    {
+        base.Start();
+
+        GameManager.Instance.chickens.Add(this);
+    }
+
     protected override void Initialize()
     {
         base.Initialize();
@@ -66,4 +73,12 @@ public class Chicken : Animal
     {
         Debug.Log("Pok pok pok");
     }
+
+    public override void Destroy()
+    {
+        GameManager.Instance.chickens.Remove(this);
+
+        base.Destroy();
+    }
+
 }

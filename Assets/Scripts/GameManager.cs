@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     // references to animals
     internal List<Animal> animals;
+    internal List<Chicken> chickens;
 
     // references to spawners
     internal List<AbstractSpawner> spawners;
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
     public void Awake()
     {
         animals = new List<Animal>();
+        chickens = new List<Chicken>();
         pathNodes = new List<GameObject>();
         spawners = new List<AbstractSpawner>();
 
@@ -76,6 +78,15 @@ public class GameManager : MonoBehaviour
 
         int randomIndex = Random.Range(0, pathNodes.Count);
         return pathNodes[randomIndex].transform.position;
+    }
+
+    public Chicken GetRandomChicken()
+    {
+        if (chickens.Count <= 0)
+            return null;
+
+        int randomIndex = Random.Range(0, chickens.Count);
+        return chickens[randomIndex];
     }
 
     public void StartLevel()
