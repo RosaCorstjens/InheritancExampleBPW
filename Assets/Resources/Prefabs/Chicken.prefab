@@ -416,8 +416,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runSpeedMultiplier: 4
-  fleeUntilDist: 5
-  fleeStartDist: 2
+  fleeUntilDist: 10
+  fleeStartDist: 5
 --- !u!195 &206299932
 NavMeshAgent:
   m_ObjectHideFlags: 0
