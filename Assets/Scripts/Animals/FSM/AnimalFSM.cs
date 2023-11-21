@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class DogFSM 
+public class AnimalFSM 
 {
-    public Dog owner;
+    public Animal owner;
 
-    private Dictionary<Type, DogState> states;
-    private DogState currentState;
+    private Dictionary<AnimalState.Type, AnimalState> states;
+    public AnimalState.Type currentState;
 
-    public DogFSM(Dog owner)
+    public AnimalFSM(Animal owner)
     {
         // save the owner
         this.owner = owner;
 
         // setup the dictionary for the states to be added
-        states = new Dictionary<Type, DogState>();
+        states = new Dictionary<AnimalState.Type, AnimalState>();
 
         // start in no state
-        currentState = null;
+        currentState = AnimalState.Type.None;
     }
 
     public void Update()
     {
-        Debug.Log(currentState);
-        currentState?.Execute();
+        if (states.ContainsKey(currentState))
+            states[currentState].Execute();
     }
 
-    public void AddState(Type type, DogState state)
+    public void AddState(AnimalState.Type type, AnimalState state)
     {
         // check if state already exists
         // return if so
@@ -39,7 +39,7 @@ public class DogFSM
         states.Add(type, state);
     }
 
-    public void ChangeState(Type type)
+    public void ChangeState(AnimalState.Type type)
     {
         // if this state doesn't exist, return
         if (!states.ContainsKey(type))
@@ -47,12 +47,16 @@ public class DogFSM
 
         // exit old state
         // set and enter new state
-        currentState?.Exit();
-        currentState = states[type];
-        currentState?.Enter();
+        if(states.ContainsKey(currentState))
+            states[currentState].Exit();
+        
+        currentState = type;
+
+        if (states.ContainsKey(currentState))
+            states[currentState]?.Enter();
     }
 
-    public DogState GetState(Type type)
+    public AnimalState GetState(AnimalState.Type type)
     {
         // returns state if it exists, else null
         if (states.ContainsKey(type))

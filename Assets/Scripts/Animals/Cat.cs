@@ -1,20 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Dog : Animal
+public class Cat : Animal
 {
-    [SerializeField] private float chaseUntilDist = 5f;
-    [SerializeField] private float chaseStartDist = 10f;
+    [SerializeField] private float chaseUntilDist = 2f;
+
+    private Chicken target;
 
     public override void Start()
     {
-        // call start from Animal
+        // call base
         base.Start();
 
-        // set my variables
-        name = "Dog";
+        // set my vars
+        name = "Cat";
         legs = 4;
     }
 
@@ -28,7 +28,6 @@ public class Dog : Animal
 
         // add chase state
         fsm.AddState(AnimalState.Type.Chase, new Chase(fsm));
-        ((Chase)fsm.GetState(AnimalState.Type.Chase)).SetChaseTarget(Camera.main.transform);
 
         // goto idle state for starters
         fsm.ChangeState(AnimalState.Type.Idle);
@@ -39,33 +38,40 @@ public class Dog : Animal
         // call base
         base.Update();
 
+        // check for target update
+        if (target == null)
+            target = GameManager.Instance.GetRandomChicken();
+
         // manage state transitions
         switch (fsm.currentState)
         {
             case AnimalState.Type.Idle:
-                // player close enough? chase him!
-                if (distToPlayer > chaseStartDist)
+                // go to chase if we have a target
+                if (target != null)
                     fsm.ChangeState(AnimalState.Type.Chase);
                 break;
             case AnimalState.Type.Chase:
-                // player reached? go to idle
-                if (distToPlayer < chaseUntilDist)
+                // set target
+                ((Chase)fsm.GetState(AnimalState.Type.Chase)).SetChaseTarget(target.transform);
+
+                // reached target? kill it and transition to idle
+                if (Vector3.Distance(transform.position, target.transform.position) < chaseUntilDist)
+                {
+                    target.Die();
+                    target = null;
                     fsm.ChangeState(AnimalState.Type.Idle);
+                }
                 break;
         }
     }
 
     protected override void MakeSound()
     {
-        Debug.Log("Woef! Woef!");
+        Debug.Log("Miaaauw");
     }
 
     protected override void ReactToClick(bool leftMB, bool rightMB)
     {
-        if (leftMB)
-        {
-            LookAt(Camera.main.transform.position);
-            MakeSound();
-        }
+        // cats do not care if they are clicked, duh
     }
 }

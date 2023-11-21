@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameState
+public abstract class GameState
 {
     protected GameFSM fsm;
 
     public GameState(GameFSM fsm) { this.fsm = fsm; }
 
-    public virtual void Enter() { }
-    public virtual void Execute() { }
-    public virtual void Exit() { }
+    public abstract void Enter();
+    public abstract void Execute();
+    public abstract void Exit();
 }
 
 public class MainMenuState : GameState
@@ -51,6 +51,7 @@ public class PlayState : GameState
         Cursor.visible = true;
 
         GameManager.Instance.timeInPlayText.gameObject.SetActive(true);
+        GameManager.Instance.StartLevel();
     }
 
     public override void Execute()

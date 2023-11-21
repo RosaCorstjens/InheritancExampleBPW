@@ -9,6 +9,20 @@ public class CameraController : MonoBehaviour
 
     public void Update()
     {
+        // handle clicks on animals
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                // something was hit
+                // if it was an animal, handle clicked
+                hit.transform.gameObject.GetComponent<Animal>()?.Clicked(Input.GetMouseButtonDown(0), Input.GetMouseButtonDown(1));
+            }
+        }
+
         // apply movement
         transform.Translate(new Vector3(0, 0, Input.GetAxis("Vertical")) * moveSpeed * Time.deltaTime);
 
