@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class DogState
+public class DogState
 {
     protected DogFSM fsm;
 
