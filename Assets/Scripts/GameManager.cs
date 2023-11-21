@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] internal GameObject pauseObject;
     [SerializeField] internal TextMeshProUGUI timeInPlayText;
     [SerializeField] internal Transform floor;
-    [SerializeField] internal List<GameObject> pathNodes;       // all flowers, used for wandering
 
     [Header("Prefabs")]
     [SerializeField] internal GameObject bloodParticle;
@@ -25,6 +24,9 @@ public class GameManager : MonoBehaviour
 
     // references to spawners, they (un)subscribe themselves
     internal List<AbstractSpawner> spawners;
+
+    // references to all flowers, used for wandering
+    internal List<GameObject> waypoints;       
 
     // singleton
     // accesible with GameManager.Instance
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
     {
         animals = new List<Animal>();
         spawners = new List<AbstractSpawner>();
+        waypoints = new List<GameObject>();
 
         fsm = new GameFSM();
         fsm.AddState(typeof(MainMenuState), new MainMenuState(fsm));
@@ -67,11 +70,11 @@ public class GameManager : MonoBehaviour
 
     public Vector3 GetRandomDestination()
     {
-        if (pathNodes.Count <= 0)
+        if (waypoints.Count <= 0)
             return Vector3.zero;
 
-        int randomIndex = Random.Range(0, pathNodes.Count);
-        return pathNodes[randomIndex].transform.position;
+        int randomIndex = Random.Range(0, waypoints.Count);
+        return waypoints[randomIndex].transform.position;
     }
 
     public Chicken GetRandomChicken()
