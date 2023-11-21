@@ -12,12 +12,7 @@ public class ParticleSystemAutoDestroy : MonoBehaviour
 
     public void Update()
     {
-        if (ps)
-        {
-            if (!ps.IsAlive())
-            {
-                Destroy(gameObject);
-            }
-        }
+        if (!ps.IsAlive())
+            Destroy(gameObject);
     }
 }

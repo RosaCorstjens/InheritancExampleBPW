@@ -1,71 +1,108 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Dog : Animal
+public class Dog : MonoBehaviour
 {
-    [SerializeField] private float chaseUntilDist = 5f;
-    [SerializeField] private float chaseStartDist = 10f;
+    public Animator animator;
+    public Rigidbody rigidbody;
+    public NavMeshAgent navMeshAgent;
+    private DogFSM fsm;
 
-    protected override void Initialize()
+    private float jumpForce = 200f;
+    private float pushForce = 50f;
+
+    private float runSpeedMultiplier = 2f;
+    private float baseSpeed;
+    private bool isRunning;
+
+    public float chaseUntilDist = 5f;
+    public float chaseStartDist = 10f;
+
+    public void Start()
     {
-        base.Initialize();
+        // remember the base speed
+        baseSpeed = navMeshAgent.speed;
 
-        name = "Dog";
-        legs = 4;
+        // create and setup the new FSM
+        fsm = new DogFSM(this);
+        fsm.AddState(typeof(DogIdle), new DogIdle(fsm));
+        fsm.AddState(typeof(DogChasePlayer), new DogChasePlayer(fsm));
 
-        // add idle state
-        fsm.AddState(AnimalStateType.Idle, new AnimalIdle());
-
-        // add chase state
-        fsm.AddState(AnimalStateType.Chase, new AnimalChase());
-        ((AnimalChase)fsm.GetState(AnimalStateType.Chase)).SetChaseTransform(GameManager.Instance.controller.transform);
-
-        // start in the chase state
-        fsm.GotoState(AnimalStateType.Chase);
+        // goto idle state for starters
+        fsm.ChangeState(typeof(DogIdle));
     }
 
-    public override void DoUpdate()
+    public void Update()
     {
-        base.DoUpdate();
+        // return if not in play
+        if (GameManager.Instance.fsm.currentState.GetType() != typeof(PlayState))
+            return;
 
-        // calculate distance to player
-        float distanceToPlayer = Vector3.Distance(transform.position, GameManager.Instance.controller.transform.position);
-
-        // based on the current state
-        // react on that distance
-        switch (fsm.CurrentState)
-        {
-            case AnimalStateType.Idle:
-                // player far enough? go to flee
-                if (distanceToPlayer > chaseStartDist)
-                {
-                    fsm.GotoState(AnimalStateType.Chase);
-                }
-                break;
-            case AnimalStateType.Chase:
-                // player reached? go to idle
-                if (distanceToPlayer < chaseUntilDist)
-                {
-                    fsm.GotoState(AnimalStateType.Idle);
-                }
-                break;
-        }
+        // update fsm
+        fsm.Update();
     }
 
-    protected override void ReactToClick(bool leftMB, bool rightMB)
+    public void LookAtPlayer(Vector3 lookAt)
     {
-        base.ReactToClick(leftMB, rightMB);
+        // don't look up/down!
+        lookAt.y = transform.position.y;
 
-        if (leftMB)
-        {
-            LookAtPlayer();
-            MakeSound();
-        }
+        // make transform look at position
+        transform.LookAt(lookAt);
     }
 
-    protected override void MakeSound()
+    public void SetMoving(bool moving)
     {
-        Debug.Log("Woef woef");
+        navMeshAgent.isStopped = !moving;
+        animator.SetInteger("Walk", moving ? 1 : 0);
+    }
+
+    public void SetDestination(Vector3 destination)
+    {
+        // if the agent is stopped, start moving
+        if (navMeshAgent.isStopped)
+            SetMoving(true);
+
+        // set the destination
+        navMeshAgent.SetDestination(destination);
+    }
+
+    public float GetDistanceToDestination()
+    {
+        return navMeshAgent.remainingDistance;
+    }
+
+    public float GetDistanceToPlayer()
+    {
+        return (transform.position - Camera.main.transform.position).magnitude;
+    }
+
+    public void Jump()
+    {
+        // add jump force to rb
+        rigidbody.AddForce(new Vector3(0, jumpForce, 0));
+    }
+
+    public void ToggleRun()
+    {
+        // switch running
+        isRunning = !isRunning;
+
+        // set speed accordingly
+        if (isRunning)
+            navMeshAgent.speed = baseSpeed * runSpeedMultiplier;
+        else
+            navMeshAgent.speed = baseSpeed;
+    }
+
+    public void Die()
+    {
+        // play death particle
+        GameObject.Instantiate(GameManager.Instance.bloodParticle, transform.position, Quaternion.identity);
+
+        // destroy me
+        Destroy(gameObject);
     }
 }

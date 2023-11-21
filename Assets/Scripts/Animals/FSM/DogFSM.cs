@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
 
-public class GameFSM 
+public class DogFSM 
 {
-    private Dictionary<Type, GameState> states;
-    public GameState currentState;
+    public Dog owner;
 
-    public GameFSM()
+    private Dictionary<Type, DogState> states;
+    private DogState currentState;
+
+    public DogFSM(Dog owner)
     {
+        // save the owner
+        this.owner = owner;
+
         // setup the dictionary for the states to be added
-        states = new Dictionary<Type, GameState>();
+        states = new Dictionary<Type, DogState>();
 
         // start in no state
         currentState = null;
@@ -17,10 +24,11 @@ public class GameFSM
 
     public void Update()
     {
+        Debug.Log(currentState);
         currentState?.Execute();
     }
 
-    public void AddState(Type type, GameState state)
+    public void AddState(Type type, DogState state)
     {
         // check if state already exists
         // return if so
@@ -44,7 +52,7 @@ public class GameFSM
         currentState?.Enter();
     }
 
-    public GameState GetState(Type type)
+    public DogState GetState(Type type)
     {
         // returns state if it exists, else null
         if (states.ContainsKey(type))
