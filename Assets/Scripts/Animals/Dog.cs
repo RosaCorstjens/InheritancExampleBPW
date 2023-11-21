@@ -28,7 +28,6 @@ public class Dog : MonoBehaviour
         // create and setup the new FSM
         fsm = new DogFSM(this);
         fsm.AddState(typeof(DogIdle), new DogIdle(fsm));
-        fsm.AddState(typeof(DogChasePlayer), new DogChasePlayer(fsm));
 
         // goto idle state for starters
         fsm.ChangeState(typeof(DogIdle));
