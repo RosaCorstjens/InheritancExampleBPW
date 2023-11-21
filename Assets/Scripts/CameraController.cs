@@ -18,8 +18,8 @@ public class CameraController : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // something was hit
-                // if it was an animal, handle clicked
-                hit.transform.gameObject.GetComponent<Animal>()?.Clicked(Input.GetMouseButtonDown(0), Input.GetMouseButtonDown(1));
+                // if it was a clickable, handle clicked
+                hit.transform.gameObject.GetComponent<IClickable>()?.Clicked(Input.GetMouseButtonDown(0), Input.GetMouseButtonDown(1));
             }
         }
 

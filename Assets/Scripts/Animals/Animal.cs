@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-public abstract class Animal : MonoBehaviour
+public abstract class Animal : MonoBehaviour, IClickable
 {
     protected new string name;
     protected int legs;
@@ -56,6 +56,7 @@ public abstract class Animal : MonoBehaviour
     #region INTERACTIONS
     public void Clicked(bool leftMB, bool rightMB)
     {
+
         ReactToClick(leftMB, rightMB);
     }
 
